@@ -5,6 +5,17 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "poc013648-tf-state"
+    key            = "terraform/state.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-lock"
+  }
+}
+
+
 # VPC (Virtual Network in AWS)
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
