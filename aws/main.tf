@@ -86,6 +86,10 @@ resource "aws_network_interface" "web_nic" {
 resource "aws_key_pair" "my_key" {
   key_name   = "aws-key"
   public_key = file("aws-key.pub")
+
+  lifecycle {
+    ignore_changes = [key_name]
+  }
 }
 
 data "aws_ami" "latest_amazon_linux" {
