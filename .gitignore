@@ -1,0 +1,26 @@
+# Ignore Terraform local cache files
+.terraform/
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/terraform.tfvars
+
+# Ignore Terraform providers and plugins
+**/.terraform/providers/
+**/.terraform/plugins/
+
+# Ignore Terraform logs
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+.terraformrc
+terraform.rc
+
+# Ignore SSH keys (if any)
+*.pem
+*.pub
+
+# Ignore GCP service account key
+gcloud/devops-sa.json
