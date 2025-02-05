@@ -20,7 +20,6 @@ terraform.rc
 
 # Ignore SSH keys (if any)
 *.pem
-*.pub
 
 # Ignore GCP service account key
 gcloud/devops-sa.json
