@@ -88,11 +88,18 @@ resource "aws_key_pair" "my_key" {
   public_key = file("aws-key.pub")
 }
 
-# EC2 Instance (Web Layer)
-resource "aws_instance" "web_vm" {
-  depends_on = [aws_subnet.subnet, aws_security_group.sg, aws_key_pair.my_key]  # Ensure required resources exist
+data "aws_ami" "latest_amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
 
-  ami                         = var.ami_id
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "web_vm" {
+  ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.subnet.id
   vpc_security_group_ids      = [aws_security_group.sg.id]
