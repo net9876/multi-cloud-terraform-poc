@@ -24,33 +24,31 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: Create GCP Credentials File
+      - name: Verify GCP Credentials File
         run: |
-          echo '${{ secrets.GCP_CREDENTIALS }}' > $HOME/gcp-credentials.json
-          chmod 600 $HOME/gcp-credentials.json  # Secure file permissions
-          cat $HOME/gcp-credentials.json  # Debug: Show the file contents
-          ls -la $HOME  # Debug: Verify file exists
-        shell: bash
+          echo "Using credentials file at: ${{ steps.auth.outputs.credentials_file }}"
+          ls -la ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Init
         run: terraform -chdir=gcloud init
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
       - name: Terraform Plan
         run: |
           terraform -chdir=gcloud plan \
-          -var="credentials_json=$HOME/gcp-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
@@ -58,11 +56,11 @@ jobs:
         if: github.event.inputs.action == 'apply'
         run: |
           terraform -chdir=gcloud apply -auto-approve \
-          -var="credentials_json=$HOME/gcp-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
@@ -70,14 +68,10 @@ jobs:
         if: github.event.inputs.action == 'destroy'
         run: |
           terraform -chdir=gcloud destroy -auto-approve \
-          -var="credentials_json=$HOME/gcp-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
-
-      - name: Cleanup Credentials File
-        if: always()
-        run: rm -f $HOME/gcp-credentials.json
