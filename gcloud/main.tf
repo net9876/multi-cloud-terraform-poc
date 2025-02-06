@@ -96,14 +96,25 @@ resource "google_compute_url_map" "url_map" {
 }
 
 # Variables
+provider "google" {
+  project     = var.project_id
+  region      = var.region
+  credentials = var.credentials_json
+}
+
+variable "credentials_json" {
+  description = "GCP Credentials JSON"
+  type        = string
+}
+
 variable "project_id" {
   description = "GCP Project ID"
-  default = "optimal-card-450016-g5"
+  type        = string
 }
 
 variable "region" {
   description = "GCP Region"
-  default     = "us-east1"
+  type        = string
 }
 
 variable "zone" {
@@ -117,8 +128,5 @@ variable "enable_lb" {
   default     = false
 }
 
-variable "credentials_json" {
-  description = "GCP Credentials JSON"
-  type        = string
-}
+
 
