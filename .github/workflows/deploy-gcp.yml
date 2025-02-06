@@ -33,9 +33,14 @@ jobs:
         run: |
           echo "Using credentials file at: ${{ steps.auth.outputs.credentials_file }}"
           ls -la ${{ steps.auth.outputs.credentials_file }}
+        shell: bash
+
+      - name: Export GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ steps.auth.outputs.credentials_file }}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Terraform Init
-        run: terraform -chdir=gcloud init 
+        run: terraform -chdir=gcloud init
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
