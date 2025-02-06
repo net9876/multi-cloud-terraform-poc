@@ -31,7 +31,9 @@ jobs:
       - name: Create GCP Credentials File
         run: |
           echo '${{ secrets.GCP_CREDENTIALS }}' > $HOME/gcp-credentials.json
+          chmod 600 $HOME/gcp-credentials.json  # Secure file permissions
           cat $HOME/gcp-credentials.json  # Debug: Show the file contents
+          ls -la $HOME  # Debug: Verify file exists
         shell: bash
 
       - name: Terraform Init
