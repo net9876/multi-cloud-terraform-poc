@@ -36,7 +36,10 @@ jobs:
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
       - name: Terraform Plan
-        run: terraform -chdir=gcloud plan -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
+        run: terraform -chdir=gcloud plan \
+          -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}' \
+          -var='project_id=${{ secrets.GCP_PROJECT_ID }}' \
+          -var='region=${{ secrets.GCP_REGION }}'
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
@@ -44,7 +47,10 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform -chdir=gcloud apply -auto-approve -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
+        run: terraform -chdir=gcloud apply -auto-approve \
+          -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}' \
+          -var='project_id=${{ secrets.GCP_PROJECT_ID }}' \
+          -var='region=${{ secrets.GCP_REGION }}'
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
@@ -52,7 +58,10 @@ jobs:
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform -chdir=gcloud destroy -auto-approve -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
+        run: terraform -chdir=gcloud destroy -auto-approve \
+          -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}' \
+          -var='project_id=${{ secrets.GCP_PROJECT_ID }}' \
+          -var='region=${{ secrets.GCP_REGION }}'
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
