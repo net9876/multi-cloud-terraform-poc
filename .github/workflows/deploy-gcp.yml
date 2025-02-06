@@ -28,26 +28,15 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
-      # ✅ PROPERLY EXPORT GOOGLE_APPLICATION_CREDENTIALS
-      - name: Set GOOGLE_APPLICATION_CREDENTIALS
-        run: |
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ steps.auth.outputs.credentials_file }}" >> $GITHUB_ENV
-          echo "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=${{ steps.auth.outputs.credentials_file }}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Verify GCP Credentials File
-        run: |
-          echo "Using credentials file at: $GOOGLE_APPLICATION_CREDENTIALS"
-          ls -la $GOOGLE_APPLICATION_CREDENTIALS
-        shell: bash
+          export_environment_variables: true
+          create_credentials_file: true
 
       - name: Terraform Init
-        run: terraform -chdir=gcloud init
+        run: |
+          terraform -chdir=gcloud init \
+          -backend-config="credentials=${{ steps.auth.outputs.credentials_file }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
-          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
-          GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
       - name: Terraform Plan
         run: |
