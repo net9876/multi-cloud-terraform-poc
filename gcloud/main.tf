@@ -1,3 +1,11 @@
+terraform {
+  backend "gcs" {
+    bucket = "tf-state-bucket-1738864366"
+    prefix = "terraform/state"
+  }
+}
+
+
 provider "google" {
   project     = var.project_id
   region      = var.region
@@ -83,7 +91,7 @@ resource "google_compute_instance" "web_vm" {
     subnetwork = google_compute_subnetwork.subnet.id
 
     access_config {
-      nat_ip = google_compute_address.public_ip.address
+      # Removing `nat_ip` to allow dynamic allocation
     }
   }
 
