@@ -1,12 +1,19 @@
-name: Deploy to Google Cloud
+name: Deploy or destroy to Google Cloud
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action (apply/destroy)'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 jobs:
-  deploy:
+  terraform:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +30,30 @@ jobs:
 
       - name: Terraform Init
         run: terraform -chdir=gcloud init
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_REGION: ${{ secrets.GCP_REGION }}
+
+      - name: Terraform Plan
+        run: terraform -chdir=gcloud plan
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
       - name: Terraform Apply
+        if: github.event.inputs.action == 'apply'
         run: terraform -chdir=gcloud apply -auto-approve
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_REGION: ${{ secrets.GCP_REGION }}
+
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        run: terraform -chdir=gcloud destroy -auto-approve
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_REGION: ${{ secrets.GCP_REGION }}

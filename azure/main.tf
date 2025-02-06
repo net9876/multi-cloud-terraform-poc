@@ -9,6 +9,15 @@ provider "azurerm" {
   use_oidc = var.use_oidc
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name   = "terraform-backend-rg"
+    storage_account_name  = "tfstatebackend12345"  # Replace with actual storage account name
+    container_name        = "tfstate"
+    key                   = "terraform.tfstate"
+  }
+}
+
 # Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = "cloud-free-tier-rg"
