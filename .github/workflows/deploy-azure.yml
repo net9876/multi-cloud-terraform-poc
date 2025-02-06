@@ -1,4 +1,4 @@
-name: Deploy or Dewstroy on Azure
+name: Deploy or Destroy on Azure
 
 on:
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
       - name: Terraform Plan
-        run: terraform -chdir=azure plan
+        run: terraform -chdir=azure plan -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="client_id=${{ secrets.ARM_CLIENT_ID }}" -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" -var="tenant_id=${{ secrets.ARM_TENANT_ID }}"
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -44,7 +44,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform -chdir=azure apply -auto-approve
+        run: terraform -chdir=azure apply -auto-approve -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="client_id=${{ secrets.ARM_CLIENT_ID }}" -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" -var="tenant_id=${{ secrets.ARM_TENANT_ID }}"
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -53,7 +53,7 @@ jobs:
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform -chdir=azure destroy -auto-approve
+        run: terraform -chdir=azure destroy -auto-approve -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="client_id=${{ secrets.ARM_CLIENT_ID }}" -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" -var="tenant_id=${{ secrets.ARM_TENANT_ID }}"
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
