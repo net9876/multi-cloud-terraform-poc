@@ -22,4 +22,5 @@ terraform.rc
 *.pem
 
 # Ignore GCP service account key
-gcloud/optimal-card-450016-g5-4b79ea6e405c.json
+*.json
+!terraform.tfvars.json
