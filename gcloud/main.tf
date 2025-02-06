@@ -4,6 +4,34 @@ provider "google" {
   credentials = var.credentials_json
 }
 
+# Variables
+variable "credentials_json" {
+  description = "GCP Credentials JSON"
+  type        = string
+  sensitive   = true
+}
+
+variable "project_id" {
+  description = "GCP Project ID"
+  type        = string
+}
+
+variable "region" {
+  description = "GCP Region"
+  type        = string
+}
+
+variable "zone" {
+  description = "GCP Zone"
+  default     = "us-east1-b"
+}
+
+variable "enable_lb" {
+  description = "Enable Load Balancer?"
+  type        = bool
+  default     = false
+}
+
 # Virtual Network
 resource "google_compute_network" "vnet" {
   name                    = "cloud-vnet"
@@ -95,32 +123,6 @@ resource "google_compute_url_map" "url_map" {
   default_service = google_compute_backend_service.backend[0].id
 }
 
-# Variables
-variable "credentials_json" {
-  description = "GCP Credentials JSON"
-  type        = string
-}
-
-variable "project_id" {
-  description = "GCP Project ID"
-  type        = string
-}
-
-variable "region" {
-  description = "GCP Region"
-  type        = string
-}
-
-variable "zone" {
-  description = "GCP Zone"
-  default     = "us-east1-b"
-}
-
-variable "enable_lb" {
-  description = "Enable Load Balancer?"
-  type        = bool
-  default     = false
-}
 
 
 
