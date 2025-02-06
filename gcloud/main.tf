@@ -1,9 +1,8 @@
 provider "google" {
-  project = var.project_id
-  region  = var.region
-  credentials = file(var.credentials_file)
+  project     = var.project_id
+  region      = var.region
+  credentials = var.credentials_json
 }
-
 
 # Virtual Network
 resource "google_compute_network" "vnet" {
@@ -112,13 +111,14 @@ variable "zone" {
   default     = "us-east1-b"
 }
 
-variable "credentials_file" {
-  description = "Path to the GCP service account JSON key file"
-  default     = "devops-sa.json"
-}
-
 variable "enable_lb" {
   description = "Enable Load Balancer?"
   type        = bool
   default     = false
 }
+
+variable "credentials_json" {
+  description = "GCP Credentials JSON"
+  type        = string
+}
+

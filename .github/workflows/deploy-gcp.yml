@@ -1,33 +1,3 @@
-name: Deploy or destroy to Google Cloud
-
-on:
-  workflow_dispatch:
-    inputs:
-      action:
-        description: 'Terraform action (apply/destroy)'
-        required: true
-        default: 'apply'
-        type: choice
-        options:
-          - apply
-          - destroy
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
       - name: Terraform Init
         run: terraform -chdir=gcloud init
         env:
@@ -36,7 +6,7 @@ jobs:
           GOOGLE_REGION: ${{ secrets.GCP_REGION }}
 
       - name: Terraform Plan
-        run: terraform -chdir=gcloud plan
+        run: terraform -chdir=gcloud plan -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
@@ -44,7 +14,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform -chdir=gcloud apply -auto-approve
+        run: terraform -chdir=gcloud apply -auto-approve -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
@@ -52,7 +22,7 @@ jobs:
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform -chdir=gcloud destroy -auto-approve
+        run: terraform -chdir=gcloud destroy -auto-approve -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
