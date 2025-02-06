@@ -5,7 +5,6 @@ terraform {
   }
 }
 
-
 provider "google" {
   project     = var.project_id
   region      = var.region
@@ -66,12 +65,6 @@ resource "google_compute_firewall" "fw" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-# Public IP
-resource "google_compute_address" "public_ip" {
-  name   = "cloud-public-ip"
-  region = var.region
-}
-
 # VM: Web Layer
 resource "google_compute_instance" "web_vm" {
   name         = "web-vm"
@@ -91,7 +84,7 @@ resource "google_compute_instance" "web_vm" {
     subnetwork = google_compute_subnetwork.subnet.id
 
     access_config {
-      # Removing `nat_ip` to allow dynamic allocation
+      # Allows Google Cloud to assign an external IP dynamically
     }
   }
 
@@ -129,7 +122,3 @@ resource "google_compute_url_map" "url_map" {
   name   = "cloud-url-map"
   default_service = google_compute_backend_service.backend[0].id
 }
-
-
-
-
