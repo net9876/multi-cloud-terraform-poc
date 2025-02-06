@@ -1,11 +1,9 @@
 terraform {
   backend "azurerm" {
     resource_group_name   = "terraform-backend-rg"
-    storage_account_name  = "tfstatebackend8411"  # Replace with your actual storage account name
+    storage_account_name  = "tfstatebackend12345"  # Replace with actual storage account
     container_name        = "tfstate"
     key                   = "terraform.tfstate"
-
-    use_azuread_auth      = true  # Ensures correct authentication
   }
 }
 
