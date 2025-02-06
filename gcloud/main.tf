@@ -20,7 +20,6 @@ variable "region" {
   type        = string
 }
 
-
 variable "zone" {
   description = "GCP Zone"
   default     = "us-east1-b"
