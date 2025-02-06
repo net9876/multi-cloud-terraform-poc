@@ -35,10 +35,7 @@ jobs:
           ls -la ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Init
-        run: terraform -chdir=gcloud init \
-          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
-          -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
-          -var="region=${{ secrets.GCP_REGION }}"
+        run: terraform -chdir=gcloud init 
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
