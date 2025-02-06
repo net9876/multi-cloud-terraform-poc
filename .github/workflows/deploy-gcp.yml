@@ -29,20 +29,18 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           export_environment_variables: true
-          
+
       - name: Terraform Init
         run: |
           terraform -chdir=gcloud init \
-          -backend-config="credentials=${{ steps.auth.outputs.credentials_file }}" \
-          -backend=true
+          -backend-config="credentials=${{ secrets.GCP_CREDENTIALS }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-          TF_VAR_credentials_json: ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Plan
         run: |
           terraform -chdir=gcloud plan \
-          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+          -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
@@ -52,7 +50,7 @@ jobs:
         if: github.event.inputs.action == 'apply'
         run: |
           terraform -chdir=gcloud apply -auto-approve \
-          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+          -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
@@ -62,7 +60,7 @@ jobs:
         if: github.event.inputs.action == 'destroy'
         run: |
           terraform -chdir=gcloud destroy -auto-approve \
-          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+          -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:

@@ -9,13 +9,14 @@ terraform {
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = file(var.credentials_json)
+  credentials = var.credentials_json 
 }
 
 # Variables
 variable "credentials_json" {
-  description = "Path to GCP Credentials JSON File"
+  description = "GCP Credentials JSON string"
   type        = string
+  sensitive   = true
 }
 
 variable "project_id" {
