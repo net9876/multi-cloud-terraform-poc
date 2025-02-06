@@ -96,12 +96,6 @@ resource "google_compute_url_map" "url_map" {
 }
 
 # Variables
-provider "google" {
-  project     = var.project_id
-  region      = var.region
-  credentials = var.credentials_json
-}
-
 variable "credentials_json" {
   description = "GCP Credentials JSON"
   type        = string
