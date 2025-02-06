@@ -1,14 +1,13 @@
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = var.credentials_json
+  credentials = file(var.credentials_json)
 }
 
 # Variables
 variable "credentials_json" {
-  description = "GCP Credentials JSON"
+  description = "Path to GCP Credentials JSON File"
   type        = string
-  sensitive   = true
 }
 
 variable "project_id" {
@@ -20,6 +19,7 @@ variable "region" {
   description = "GCP Region"
   type        = string
 }
+
 
 variable "zone" {
   description = "GCP Zone"
