@@ -1,9 +1,5 @@
 terraform {
-  backend "gcs" {
-    bucket      = "tf-state-bucket-1738864366"
-    prefix      = "terraform/state"
-    credentials = var.credentials_json
-  }
+  backend "gcs" {}
 }
 
 provider "google" {
