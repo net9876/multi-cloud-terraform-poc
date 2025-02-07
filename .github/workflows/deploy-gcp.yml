@@ -1,4 +1,36 @@
-- name: Terraform Init
+name: Deploy or Destroy to Google Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action (apply/destroy)'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          export_environment_variables: true
+
+      - name: Terraform Init
         run: |
           echo '${{ secrets.GCP_CREDENTIALS }}' > google-credentials.json
           terraform -chdir=gcloud init \
