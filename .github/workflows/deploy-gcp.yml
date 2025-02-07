@@ -37,7 +37,6 @@ jobs:
           bucket = "tf-state-bucket-1738864366"
           prefix = "terraform/state"
           credentials = "${GOOGLE_APPLICATION_CREDENTIALS}"
-          project = "${{ secrets.GCP_PROJECT_ID }}"
           EOF
           cat backend.hcl
         env:
@@ -50,6 +49,8 @@ jobs:
             -backend-config=backend.hcl
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Plan
         run: |
@@ -60,6 +61,8 @@ jobs:
             -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
@@ -71,6 +74,8 @@ jobs:
             -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
@@ -82,3 +87,5 @@ jobs:
             -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
