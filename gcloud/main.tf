@@ -1,5 +1,7 @@
 terraform {
-  backend "gcs" {}
+  backend "gcs" {
+    project = "optimal-card-450016-g5"
+  }
 }
 
 provider "google" {
