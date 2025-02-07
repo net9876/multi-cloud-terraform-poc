@@ -15,6 +15,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -30,12 +33,19 @@ jobs:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           export_environment_variables: true
 
+      - name: Debug Auth
+        run: |
+          echo "Credentials file path: ${{ steps.auth.outputs.credentials_file }}"
+          ls -la ${{ steps.auth.outputs.credentials_file }}
+
       - name: Terraform Init
         run: |
           terraform -chdir=gcloud init \
           -backend-config="credentials=${{ steps.auth.outputs.credentials_file }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
+          TF_VAR_credentials_json: ${{ steps.auth.outputs.credentials_file }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Plan
         run: |
@@ -45,6 +55,7 @@ jobs:
           -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
@@ -55,6 +66,7 @@ jobs:
           -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
@@ -65,3 +77,4 @@ jobs:
           -var="region=${{ secrets.GCP_REGION }}"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
