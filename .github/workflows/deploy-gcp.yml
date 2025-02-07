@@ -32,42 +32,36 @@ jobs:
 
       - name: Terraform Init
         run: |
-          echo '${{ secrets.GCP_CREDENTIALS }}' > google-credentials.json
           terraform -chdir=gcloud init \
-          -backend-config="credentials=google-credentials.json"
+          -backend-config="credentials=${{ steps.auth.outputs.credentials_file }}"
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Plan
         run: |
           terraform -chdir=gcloud plan \
-          -var="credentials_json=google-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
         run: |
           terraform -chdir=gcloud apply -auto-approve \
-          -var="credentials_json=google-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         run: |
           terraform -chdir=gcloud destroy -auto-approve \
-          -var="credentials_json=google-credentials.json" \
+          -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-
-      # Clean up credentials file
-      - name: Clean up
-        if: always()
-        run: rm -f google-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
