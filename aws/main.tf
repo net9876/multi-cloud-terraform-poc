@@ -16,7 +16,7 @@ terraform {
 }
 
 
-# VPC (Virtual Network in AWS)
+# VPC
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -36,7 +36,7 @@ resource "aws_subnet" "subnet" {
   }
 }
 
-# Security Group (NSG in Azure)
+# Security Group
 resource "aws_security_group" "sg" {
   name        = "cloud-sg"
   description = "Security group for web VM"
@@ -79,7 +79,7 @@ resource "aws_security_group" "sg" {
   }
 }
 
-# Elastic IP (Public IP in AWS)
+# Elastic IP
 resource "aws_eip" "eip" {
   vpc = true
 }

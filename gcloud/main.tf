@@ -14,7 +14,7 @@ provider "google" {
 variable "credentials_json" {
   description = "GCP Credentials JSON string"
   type        = string
-  sensitive   = true  # Mark as sensitive to avoid showing in logs
+  sensitive   = true
 }
 
 variable "project_id" {
@@ -53,7 +53,7 @@ resource "google_compute_subnetwork" "subnet" {
   region        = var.region
 }
 
-# Firewall (equivalent to Network Security Group in Azure)
+# Firewall
 resource "google_compute_firewall" "fw" {
   name    = "cloud-fw"
   network = google_compute_network.vnet.name
@@ -85,7 +85,6 @@ resource "google_compute_instance" "web_vm" {
     subnetwork = google_compute_subnetwork.subnet.id
 
     access_config {
-      # Allows Google Cloud to assign an external IP dynamically
     }
   }
 
