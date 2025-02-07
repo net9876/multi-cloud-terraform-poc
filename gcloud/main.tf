@@ -29,7 +29,6 @@ variable "region" {
 
 variable "zone" {
   description = "GCP Zone"
-  default     = "us-east1-b"
 }
 
 variable "enable_lb" {
