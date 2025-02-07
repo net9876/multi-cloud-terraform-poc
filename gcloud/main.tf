@@ -25,10 +25,12 @@ variable "project_id" {
 variable "region" {
   description = "GCP Region"
   type        = string
+  default = "us-east1"
 }
 
 variable "zone" {
   description = "GCP Zone"
+  default     = "us-east1-b"
 }
 
 variable "enable_lb" {
@@ -68,7 +70,7 @@ resource "google_compute_firewall" "fw" {
 resource "google_compute_instance" "web_vm" {
   name         = "web-vm"
   machine_type = "e2-micro"
-  zone         = var.zone
+  zone         = "${var.region}-b"
 
   boot_disk {
     initialize_params {
