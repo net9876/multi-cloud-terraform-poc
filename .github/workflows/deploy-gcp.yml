@@ -15,9 +15,6 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - name: Checkout repository
@@ -27,18 +24,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v1
+        uses: 'google-github-actions/auth@v1'
         with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          token_format: 'access_token'
-          export_environment_variables: true
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
           create_credentials_file: true
-
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Init
         run: |
