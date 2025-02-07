@@ -30,21 +30,18 @@ jobs:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
           create_credentials_file: true
 
-      - name: Debug Credentials
-        run: |
-          echo "Credentials file exists: $(test -f ${{ steps.auth.outputs.credentials_file }} && echo 'yes' || echo 'no')"
-          echo "Credentials file path: ${{ steps.auth.outputs.credentials_file }}"
-
       - name: Create Backend Config
         run: |
           cd gcloud
           cat > backend.hcl <<EOF
           bucket = "tf-state-bucket-1738864366"
           prefix = "terraform/state"
-          credentials = "${{ steps.auth.outputs.credentials_file }}"
-          access_token = "${{ steps.auth.outputs.access_token }}"
+          credentials = "${GOOGLE_APPLICATION_CREDENTIALS}"
+          project = "${{ secrets.GCP_PROJECT_ID }}"
           EOF
           cat backend.hcl
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Terraform Init
         run: |
@@ -52,40 +49,36 @@ jobs:
           terraform init \
             -backend-config=backend.hcl
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
-          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Terraform Plan
         run: |
           cd gcloud
           terraform plan \
-            -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+            -var="credentials_json=${GOOGLE_APPLICATION_CREDENTIALS}" \
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
-          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
         run: |
           cd gcloud
           terraform apply -auto-approve \
-            -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+            -var="credentials_json=${GOOGLE_APPLICATION_CREDENTIALS}" \
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
-          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         run: |
           cd gcloud
           terraform destroy -auto-approve \
-            -var="credentials_json=${{ steps.auth.outputs.credentials_file }}" \
+            -var="credentials_json=${GOOGLE_APPLICATION_CREDENTIALS}" \
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ secrets.GCP_REGION }}"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file }}
-          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
